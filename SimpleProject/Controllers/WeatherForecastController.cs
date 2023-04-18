@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SimpleProject.Repo;
 
 namespace SimpleProject.Controllers
 {
@@ -6,12 +7,9 @@ namespace SimpleProject.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
         private readonly ILogger<WeatherForecastController> _logger;
+
+        private IWeatherData repo = new LocalCosmosEmulator("https://localhost:8081", "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
 
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
@@ -19,15 +17,23 @@ namespace SimpleProject.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<IEnumerable<WeatherForecast>> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            IQueryCollection queryParams = this.HttpContext.Request.Query;
+            if(queryParams != null && queryParams.Count > 0)
             {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+                return await repo.GetDataAync(queryParams["sql"]);
+            }
+            else
+            {
+                return await repo.GetDataAync();
+            }
+        }
+
+        [HttpPost(Name = "PostWeatherForecast")]
+        public async Task<WeatherForecast> Post([FromBody] WeatherForecast weather)
+        {
+            return await repo.AddDataAsync(weather);
         }
     }
 }
