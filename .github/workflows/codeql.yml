@@ -17,8 +17,11 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ "dev" ]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
   schedule:
-    - cron: '0 08 * * *'
+    - cron: '00 01 * * 1' # Every monday at 01:00 UTC
 
 jobs:
   analyze:
