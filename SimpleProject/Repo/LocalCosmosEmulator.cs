@@ -36,9 +36,9 @@ namespace SimpleProject.Repo
             return list;
         }
 
-        public async Task<IList<WeatherForecast>> GetDataAync(string sql)
+        public async Task<IList<WeatherForecast>> GetDataAync(string where)
         {
-            QueryDefinition finalQuery = new QueryDefinition(sql);
+            QueryDefinition finalQuery = new QueryDefinition($"select value c from c {where}");
             var container = await GetContainer();
             IList<WeatherForecast> list = new List<WeatherForecast>();
 

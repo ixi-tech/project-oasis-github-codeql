@@ -20,9 +20,10 @@ namespace SimpleProject.Controllers
         public async Task<IEnumerable<WeatherForecast>> Get()
         {
             IQueryCollection queryParams = this.HttpContext.Request.Query;
-            if(queryParams != null && queryParams.Count > 0)
+            string paramName = "where";
+            if(queryParams != null && queryParams.Count > 0 && queryParams.ContainsKey(paramName))
             {
-                return await repo.GetDataAync(queryParams["sql"]);
+                return await repo.GetDataAync(queryParams[paramName]);
             }
             else
             {
