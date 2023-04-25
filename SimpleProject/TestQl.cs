@@ -5,7 +5,7 @@ namespace SimpleProject
 {
     public class TestQl
     {
-        static void Main(string[] args)
+        public void CodeQlShouldFail(string[] args)
         {
             Console.WriteLine("Enter your user ID:");
             string userId = Console.ReadLine();
