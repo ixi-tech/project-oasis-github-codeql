@@ -1,19 +1,30 @@
-﻿namespace SimpleProject
+﻿using System;
+using System.Data.SqlClient;
+
+namespace SimpleProject
 {
     public class TestQl
     {
-        class WithFoo
+        static void Main(string[] args)
         {
-            public void Foo(int i) { }
-        }
+            Console.WriteLine("Enter your user ID:");
+            string userId = Console.ReadLine();
 
-        class WithoutFoo { }
+            SqlConnection connection = new SqlConnection("your_connection_string");
+            connection.Open();
 
-        public void DoSomething()
-        {
-            //https://codeql.github.com/codeql-query-help/csharp/cs-invalid-dynamic-call/
-            dynamic o = new WithoutFoo();
-            o.Foo(3);
+            // SQL injection vulnerability  
+            string query = "SELECT * FROM Users WHERE UserId = " + userId;
+            SqlCommand command = new SqlCommand(query, connection);
+            SqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Console.WriteLine("User: {0}, Email: {1}", reader["Name"], reader["Email"]);
+            }
+
+            reader.Close();
+            connection.Close();
         }
     }
 }
